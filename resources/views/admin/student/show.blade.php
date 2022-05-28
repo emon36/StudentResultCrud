@@ -29,7 +29,7 @@
                     @endforeach
                     <tr>
                         <th>Total marks</th>
-                        <td>{{$student->getStudentResult($student->id)}}</td>
+                        <td> <span class="bg-light">{{$student->getStudentResult($student->id)}}</span> </td>
                     </tr>
                 </table>
             </div>

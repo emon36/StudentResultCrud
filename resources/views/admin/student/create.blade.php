@@ -12,13 +12,23 @@
                     <div class="form-group row mb-4">
                         <label for="horizontal-firstname-input" class="col-sm-3 col-form-label">Student Name</label>
                         <div class="col-sm-9">
-                            <input type="text" name="name" class="form-control" id="horizontal-firstname-input">
+                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"  value="{{ old('name') }}" id="horizontal-firstname-input">
+                            @error('name')
+                            <span class="invalid-feedback" role="alert">
+                             <strong>{{ $message }}</strong>
+                             </span>
+                            @enderror
                         </div>
                     </div>
                     <div class="form-group row mb-4">
                         <label for="horizontal-firstname-input" class="col-sm-3 col-form-label">Student Image</label>
                         <div class="col-sm-9">
-                            <input type="file" name="image" class="form-control" id="horizontal-firstname-input">
+                            <input type="file" name="image" class="form-control  @error('image') is-invalid @enderror" id="horizontal-firstname-input">
+                            @error('image')
+                            <span class="invalid-feedback" role="alert">
+                             <strong>{{ $message }}</strong>
+                             </span>
+                            @enderror
                         </div>
                     </div>
 

@@ -12,16 +12,27 @@
                     <div class="form-group row mb-4">
                         <label for="horizontal-firstname-input" class="col-sm-3 col-form-label">Student Name</label>
                         <div class="col-sm-9">
-                            <input type="text" name="name" class="form-control" value="{{$student->name}}"
+                            <input type="text" name="name" class="form-control  @error('name') is-invalid @enderror" value="{{$student->name}}"
                                    id="horizontal-firstname-input">
+                            @error('name')
+                            <span class="invalid-feedback" role="alert">
+                             <strong>{{ $message }}</strong>
+                             </span>
+                            @enderror
                         </div>
                     </div>
                     <div class="form-group row mb-4">
                         <label for="horizontal-firstname-input" class="col-sm-3 col-form-label">Student Image</label>
                         <div class="col-sm-9">
-                            <input type="file" name="image" class="form-control" id="horizontal-firstname-input">
+                            <input type="file" name="image" class="form-control  @error('image') is-invalid @enderror" id="horizontal-firstname-input">
+                            @error('image')
+                            <span class="invalid-feedback" role="alert">
+                             <strong>{{ $message }}</strong>
+                             </span>
+                            @enderror
                             <br>
                             <img src="{{asset('uploads/studentFiles/'.$student->image)}}" width="100">
+
                         </div>
                     </div>
 
@@ -33,7 +44,7 @@
 
                         </tr>
                         <tr>
-                            <td><select class="form-control m-bootstrap-select" name="addmore[0][subject_id]">
+                            <td><select class="form-control m-bootstrap-select" name="addmore[0][subject_id]" required>
                                     <option value=""> Select Subject</option>
                                     @foreach($subjects as $subject)
                                         <option value="{{$subject->id}}">
@@ -41,7 +52,7 @@
                                         </option>@endforeach</select>
                             </td>
 
-                            <td><input type="text" name="addmore[0][achieve_number]" placeholder="Enter Marks"
+                            <td><input type="text" name="addmore[0][achieve_number]" required placeholder="Enter Marks"
                                        class="form-control"/></td>
                             <td>
                                 <button type="button" name="add" id="add" class="btn btn-success">Add More</button>
@@ -69,7 +80,7 @@
         var i = 0;
         $("#add").click(function () {
             ++i;
-            $("#dynamicTable").append('<tr><td><select class="form-control m-bootstrap-select" name="addmore[' + i + '][subject_id]"><option value="">Select Subject</option>@foreach($subjects as $subject)<option value="{{$subject->id}}">{{ $subject->subject_name}}</option>@endforeach</select></td> <td><input type="text" name="addmore[' + i + '][achieve_number]" placeholder="Enter Marks" class="form-control" /></td><td><button type="button" class="btn btn-danger remove-tr">Remove</button></td></tr>');
+            $("#dynamicTable").append('<tr><td><select class="form-control m-bootstrap-select" required name="addmore[' + i + '][subject_id]"><option value="">Select Subject</option>@foreach($subjects as $subject)<option value="{{$subject->id}}">{{ $subject->subject_name}}</option>@endforeach</select></td> <td><input type="text" name="addmore[' + i + '][achieve_number]" required placeholder="Enter Marks" class="form-control" /></td><td><button type="button" class="btn btn-danger remove-tr">Remove</button></td></tr>');
         });
         $(document).on('click', '.remove-tr', function () {
             $(this).parents('tr').remove();

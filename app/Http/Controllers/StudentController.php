@@ -29,6 +29,12 @@ class StudentController extends Controller
     public function store(Request $request)
     {
 
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'image' => ['image','mimes:jpeg,png,jpg','max:2048']
+        ]);
+
+
         $imageFileName = 'studentImage.png';
         if ($request->hasFile('image')) {
             $studentImageFile = $request->file('image');
@@ -66,6 +72,7 @@ class StudentController extends Controller
 
     public function update(Request $request,$id)
     {
+
         try {
             DB::beginTransaction();
             $student = Student::find($id);
@@ -77,13 +84,13 @@ class StudentController extends Controller
                     @unlink($destination);
                 }
                 $studentImageFile = $request->file('image');
-                $imageFileName = 'profile_' . time() . '.' . $studentImageFile->getClientOriginalExtension();
+                $imageFileName = 'student_' . time() . '.' . $studentImageFile->getClientOriginalExtension();
                 $studentImageFile->move('uploads/studentFiles/', $imageFileName);
                 $student->image = $imageFileName;
             }
             $student->update();
 
-            if ($request->has('addmore')) {
+            if ($request->has('addmore' )) {
                 $collection = $request->addmore;
                 foreach ($collection as $key => $value) {
                     if (StudentResult::where('subject_id', $value['subject_id'])->where('student_id',$student->id)->exists()) {

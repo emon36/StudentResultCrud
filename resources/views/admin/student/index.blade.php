@@ -15,7 +15,7 @@
                                 <th>#</th>
                                 <th>Student Name</th>
                                 <th>Image</th>
-                                <th>Total</th>
+                                <th>Total Marks</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
