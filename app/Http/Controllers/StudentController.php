@@ -72,6 +72,10 @@ class StudentController extends Controller
 
     public function update(Request $request,$id)
     {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'image' => ['image','mimes:jpeg,png,jpg','max:2048']
+        ]);
 
         try {
             DB::beginTransaction();
