@@ -6,12 +6,13 @@ use App\Models\Subject;
 use Illuminate\Http\Request;
 use App\Models\Student;
 use App\Models\StudentResult;
+use Illuminate\Support\Facades\DB;
 
 class StudentController extends Controller
 {
     public function index()
     {
-        $student = Student::orderBy('id','desc')->paginate('10');
+        $student = Student::orderBy('id','desc')->paginate('5');
         return view('admin.student.index',['students'=>$student]);
     }
 
@@ -19,10 +20,11 @@ class StudentController extends Controller
 
         $subjects = Subject::all();
 
-
         return view('admin.student.create',['subjects'=>$subjects]);
 
     }
+
+
 
     public function store(Request $request)
     {
@@ -42,8 +44,15 @@ class StudentController extends Controller
         $student->image = $imageFileName;
         $student->save();
 
-        return redirect()->back();
+        return back()->with('message', 'Your form has been submitted.');
 
+    }
+
+    public function show($id)
+    {
+        $student = Student::find($id);
+        $result = StudentResult::where('student_id',$id)->get();
+        return view('admin.student.show',['student'=>$student,'result'=>$result]);
     }
 
     public function edit($id)
@@ -57,39 +66,71 @@ class StudentController extends Controller
 
     public function update(Request $request,$id)
     {
-        $student = Student::find($id);
-        $student->name = $request->name;
+        try {
+            DB::beginTransaction();
+            $student = Student::find($id);
+            $student->name = $request->name;
 
-        if($request->file('image'))
-        {
-            $destination = 'uploads/studentFiles/'.$student->image;
-            if(file_exists($destination))
-            {
-                @unlink($destination);
+            if ($request->file('image')) {
+                $destination = 'uploads/studentFiles/' . $student->image;
+                if (file_exists($destination)) {
+                    @unlink($destination);
+                }
+                $studentImageFile = $request->file('image');
+                $imageFileName = 'profile_' . time() . '.' . $studentImageFile->getClientOriginalExtension();
+                $studentImageFile->move('uploads/studentFiles/', $imageFileName);
+                $student->image = $imageFileName;
             }
-            $studentImageFile = $request->file('image');
-            $imageFileName = 'profile_' . time() . '.' . $studentImageFile->getClientOriginalExtension();
-            $studentImageFile->move('uploads/studentFiles/', $imageFileName);
-            $student->image = $imageFileName;
-        }
-        $student->update();
+            $student->update();
 
-        if ($request->subject_id or $request->achieve_number)
+            if ($request->has('addmore')) {
+                $collection = $request->addmore;
+                foreach ($collection as $key => $value) {
+                    if (StudentResult::where('subject_id', $value['subject_id'])->where('student_id',$student->id)->exists()) {
+                        $result = StudentResult::find($student->id);
+                        $result->update([
+                            '$student->id'=>$student->id,
+                            'subject_id' => $value['subject_id'],
+                            'achieve_number' => $value['achieve_number'],
+                        ]);
+                    } else {
+                        $result = new StudentResult();
+                        $result->student_id = $student->id;
+                        $result->subject_id = $value['subject_id'];
+                        $result->achieve_number = $value['achieve_number'];
+                        $result->save();
+                    }
+                }
+            }
+
+            DB::commit();
+            return redirect()->route('admin.students')->with('message', 'Student Information has been Updated.');
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
+        }
+
+}
+
+
+    public function delete(Request $request)
+    {
+
+        $id = $request->id;
+        $student = Student::find($id);
+        $imagePath = public_path("/uploads/StudentFiles/".$student->image);
+        if (file_exists($imagePath))
         {
-
-            $result =  new StudentResult();
-            $result->student_id = $id;
-            $result->subject_id = $request->subject_id;
-            $result->achieve_number = $request->achieve_number;
-
-            $result->save();
+            @unlink($imagePath);
+        }else{
+            $student->delete();
         }
-
-        return redirect()->back();
+        $student->delete();
+        return response()->json([
+            'status'=>200,
+            'message'=>'Student Deleted Successfully.'
+        ]);
 
     }
-
-
 
 
 }

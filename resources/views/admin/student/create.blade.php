@@ -6,6 +6,7 @@
             <div class="card-header">
             </div>
             <div class="card-body">
+                <p class="text-center text-success">{{Session::get('message')}}</p>
                 <form action="{{route('admin.student.store')}}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group row mb-4">

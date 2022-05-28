@@ -6,27 +6,50 @@
             <div class="card-header">
             </div>
             <div class="card-body">
-                <form action="{{route('admin.student.update',$student->id)}}" method="POST" enctype="multipart/form-data">
+                <form action="{{route('admin.student.update',$student->id)}}" method="POST"
+                      enctype="multipart/form-data">
                     @csrf
                     <div class="form-group row mb-4">
                         <label for="horizontal-firstname-input" class="col-sm-3 col-form-label">Student Name</label>
                         <div class="col-sm-9">
-                            <input type="text" name="name" class="form-control" value="{{$student->name}}" id="horizontal-firstname-input">
+                            <input type="text" name="name" class="form-control" value="{{$student->name}}"
+                                   id="horizontal-firstname-input">
                         </div>
                     </div>
                     <div class="form-group row mb-4">
                         <label for="horizontal-firstname-input" class="col-sm-3 col-form-label">Student Image</label>
                         <div class="col-sm-9">
                             <input type="file" name="image" class="form-control" id="horizontal-firstname-input">
+                            <br>
                             <img src="{{asset('uploads/studentFiles/'.$student->image)}}" width="100">
                         </div>
                     </div>
-                    <button id="addRow" type="button" class="btn btn-info float-right mb-3 ">Add Subject</button>
 
+                    <table class="table table-bordered" id="dynamicTable">
+                        <tr>
+                            <th>Subject</th>
+                            <th>Marks</th>
+                            <th>Action</th>
 
+                        </tr>
+                        <tr>
+                            <td><select class="form-control m-bootstrap-select" name="addmore[0][subject_id]">
+                                    <option value=""> Select Subject</option>
+                                    @foreach($subjects as $subject)
+                                        <option value="{{$subject->id}}">
+                                            {{ $subject->subject_name}}
+                                        </option>@endforeach</select>
+                            </td>
 
-                    <div id="newRow"></div>
+                            <td><input type="text" name="addmore[0][achieve_number]" placeholder="Enter Marks"
+                                       class="form-control"/></td>
+                            <td>
+                                <button type="button" name="add" id="add" class="btn btn-success">Add More</button>
+                            </td>
 
+                        </tr>
+
+                    </table>
 
                     <div class="form-group">
                         <div class="col-sm-9">
@@ -38,39 +61,18 @@
                 </form>
             </div>
         </div>
-        >
     </div>
 @endsection
 
 @section('scripts')
-    <script>
-        var subjects = {!! json_encode($subjects->toArray()) !!}
-        var options;
-
-        $.each( subjects, function( key, value ) {
-            options = options + '<option value="'+value.id+'">'+value.subject_name+'</option>';
-        })
-
-        $("#addRow").click(function () {
-            var html = '';
-            html += '<div id="inputFormRow">';
-            html += '<div class="input-group mb-3">';
-            html += '<select class="form-control" name="subject_id">';
-            html += '<option>choose subject</option>';
-            html +=  options;
-            html += '</select>';
-            html += '<input type="number" name="achieve_number" class="form-control m-input" placeholder="Enter Marks" autocomplete="off">';
-            html += '<div class="input-group-append">';
-            html += '<button id="removeRow" type="button" class="btn btn-danger">Remove</button>';
-            html += '</div>';
-            html += '</div>';
-
-            $('#newRow').append(html);
+    <script type="text/javascript">
+        var i = 0;
+        $("#add").click(function () {
+            ++i;
+            $("#dynamicTable").append('<tr><td><select class="form-control m-bootstrap-select" name="addmore[' + i + '][subject_id]"><option value="">Select Subject</option>@foreach($subjects as $subject)<option value="{{$subject->id}}">{{ $subject->subject_name}}</option>@endforeach</select></td> <td><input type="text" name="addmore[' + i + '][achieve_number]" placeholder="Enter Marks" class="form-control" /></td><td><button type="button" class="btn btn-danger remove-tr">Remove</button></td></tr>');
         });
-
-        // remove row
-        $(document).on('click', '#removeRow', function () {
-            $(this).closest('#inputFormRow').remove();
+        $(document).on('click', '.remove-tr', function () {
+            $(this).parents('tr').remove();
         });
 
     </script>

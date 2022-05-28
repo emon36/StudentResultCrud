@@ -323,7 +323,7 @@
                             <li><a href="{{route('admin.students')}}">Manage Student</a></li>
                         </ul>
                     </li>
-                    
+
                 </ul>
             </div>
             <!-- Sidebar -->
@@ -381,6 +381,10 @@
 
 <!-- App js -->
 <script src="{{asset('backend/assets/js/app.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+
+
 
 @yield('scripts')
 </body>

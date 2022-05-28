@@ -14,4 +14,15 @@ class Student extends Model
         return $this->hasMany(Subject::class);
     }
 
+    public function getStudentResult($id)
+    {
+        $studentInfo = StudentResult::where('student_id', $id)->latest()->take('2')->get();
+        return $studentInfo->sum('achieve_number');
+    }
+
+    public function result()
+    {
+        return $this->hasMany(StudentResult::class);
+    }
+
 }

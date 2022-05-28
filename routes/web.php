@@ -29,6 +29,8 @@ Route::group(['prefix' => 'admin','middleware' => ['auth','is_admin']], function
     Route::post('/student/store', [StudentController::class, 'store'])->name('admin.student.store');
     Route::post('/student/update/{id}', [StudentController::class, 'update'])->name('admin.student.update');
     Route::get('/student/edit/{id}', [StudentController::class, 'edit'])->name('admin.student.edit');
+    Route::delete('/student/delete', [StudentController::class, 'delete'])->name('admin.student.delete');
+    Route::get('/student/show/{id}', [StudentController::class, 'show'])->name('admin.student.show');
 
 });
 
